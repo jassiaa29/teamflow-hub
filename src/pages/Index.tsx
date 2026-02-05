@@ -1,14 +1,28 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useAuth } from "@/hooks/useAuth";
+import { useOrganization } from "@/hooks/useOrganization";
+import Dashboard from "./Dashboard";
+import NewOrg from "./NewOrg";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+export default function Index() {
+  const { loading: authLoading } = useAuth();
+  const { currentOrg, organizations, loading: orgLoading } = useOrganization();
+
+  if (authLoading || orgLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="space-y-4 w-full max-w-md px-4">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-32 w-full" />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
 
-export default Index;
+  if (organizations.length === 0) {
+    return <NewOrg />;
+  }
+
+  return <Dashboard />;
+}
